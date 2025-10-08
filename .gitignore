@@ -1,0 +1,23 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Django database
+db.sqlite3
+
+# Virtual environment
+venv/
+env/
+
+# Logs
+*.log
+
+# Environment variables
+*.env
+
+# System files
+*.DS_Store
+
+# Django migrations (optional if you want to ignore them)
+*/migrations/*.py
+*/migrations/*.pyc
