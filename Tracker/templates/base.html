@@ -1,105 +1,377 @@
-{% extends "index.html"%}
+
+{% extends "index.html" %}
 {% block start %}
 
-<nav style="display: flex; 
-            justify-content: space-around; 
-            background-color: #95bdef; 
-            padding-left: 20px; 
-            padding-right: 20px; 
-            padding-top: 10px; 
-            width: 100%; 
-            position: fixed; 
-            top: 0; 
-            z-index: 1000; 
-            left: 0;
-            ">
+<style>
+    /* 🌟 GLOBAL SETTINGS */
+body {
+  background-color: #e5e6ed;
+  font-family: "Noto Sans", sans-serif;
+  margin: 0;
+  padding: 0;
+  color: #333;
+}
 
-<h1 style="color: black;"><i class="fa-solid fa-house"></i> Expense Tracker</h1>
-<h4 style="margin-top: 20px; 
-          display: flex; 
-          gap: 10px; 
-          color: black;
+/* 🌟 NAVBAR */
+nav {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background-color: #95bdef;
+  padding: 10px 20px;
+  width: 100%;
+}
 
-          "><i style="font-size: 20px; padding-top: 1px;" class="fa-solid fa-circle-user"></i>User Name:
-          <span style="font-size: 15px; margin-top: 1px; color: rgb(139, 77, 14);">{{request.user.first_name}} {{request.user.last_name}}</span>
-        </h4>
+nav h1 {
+  color: black;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 
-         <!-- {{request.user.username}} -->
+nav h4 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: black;
+  font-size: 1.2rem;
+}
 
-<a  class="btn" style="background-color: brown;
-                       width: 100px; 
-                       text-decoration: none; 
-                       font-weight: bold;" 
-                       href="{% url 'logout_view' %}"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+nav h4 span {
+  color: rgb(139, 77, 14);
+  font-weight: bold;
+}
 
+nav .btn {
+  background-color: brown;
+  width: 120px;
+  text-decoration: none;
+  color: white;
+  text-align: center;
+  font-weight: bold;
+  border-radius: 5px;
+  padding: 8px 0;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+  transition: 0.3s ease;
+}
+
+nav .btn:hover {
+  background-color: rgb(120, 30, 30);
+  transform: scale(1.05);
+}
+
+/* 🌟 MAIN CONTENT AREA */
+.main-content {
+  margin-top: 120px;
+  padding: 30px;
+  background-color: #95bdef;
+  border-radius: 8px;
+  margin: 20px;
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 30px;
+}
+
+/* 🟩 LEFT SIDE - SUMMARY + FORM */
+.left-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.header img {
+  width: 4rem;
+  opacity: 0.8;
+}
+
+.balance-container h2 {
+  margin: 5px 0;
+}
+
+.balance {
+  font-size: 1.8rem;
+  color: #13168d;
+  font-weight: bold;
+}
+
+.inc-exp-container {
+  background-color: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.inc-exp-container > div {
+  text-align: center;
+  flex: 1;
+}
+
+.inc-exp-container h4 {
+  margin-bottom: 8px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.money.plus {
+  color: #2ecc71;
+  font-weight: bold;
+}
+
+.money.minus {
+  color: #c0392b;
+  font-weight: bold;
+}
+
+/* 🟨 FORM AREA */
+form {
+  background-color: #fff;
+  border-radius: 5px;
+  padding: 25px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.form-control {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+
+.form-control label {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.form-control input {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  height: 40px;
+  padding-left: 10px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.form-control input:focus {
+  border-color: #13168d;
+  box-shadow: 0 0 6px rgba(19, 22, 141, 0.3);
+}
+
+.btn {
+  background-color: #13168d;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px;
+  width: 100%;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.btn:hover {
+  background-color: #0f126d;
+  transform: scale(1.02);
+}
+
+/* 🟥 RIGHT SIDE - TRANSACTION HISTORY */
+.right-panel {
+  background-color: #fff;
+  border-radius: 5px;
+  padding: 25px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  max-height: 650px;
+  overflow-y: auto;
+
+}
+
+.right-panel h3 {
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 8px;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  font-size: 1.1rem;
+  color: #13168d;
+}
+
+.list {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.list li {
+  background-color: #f8f8f8;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 12px 10px;
+  border-radius: 5px;
+  font-weight: 500;
+  position: relative;
+  transition: 0.3s ease;
+}
+
+.list li:hover {
+  background-color: #f0f6ff;
+}
+
+.list li.plus {
+  border-left: 5px solid #2ecc71;
+}
+
+.list li.minus {
+  border-left: 5px solid #c0392b;
+}
+
+.delete-btn {
+  background: #c0392b;
+  border: none;
+  color: #fff;
+  border-radius: 4px;
+  padding: 6px 10px;
+  font-size: 14px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.list li:hover .delete-btn {
+  opacity: 1;
+}
+
+/* 🟦 NOTIFICATION BAR */
+.notification-container {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  background-color: #c0392b;
+  color: white;
+  padding: 15px 20px;
+  border-radius: 8px 0 0 0;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.notification-container.show {
+  opacity: 1;
+}
+
+/* 🌐 RESPONSIVE DESIGN */
+@media (max-width: 992px) {
+  .main-content {
+    grid-template-columns: 1fr;
+  }
+
+  .right-panel {
+    max-height: none;
+  }
+}
+
+@media (max-width: 600px) {
+  nav {
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
+  }
+
+  nav h1 {
+    font-size: 1.3rem;
+  }
+
+  .main-content {
+    margin: 15px;
+    padding: 20px;
+  }
+
+  .left-panel, .right-panel {
+    width: 100%;
+  }
+
+  .btn {
+    font-size: 0.9rem;
+  }
+}
+
+</style>
+
+
+
+<nav>
+  <h1><i class="fa-solid fa-house"></i> Expense Tracker</h1>
+  <h4><i class="fa-solid fa-circle-user"></i> User Name:
+      <span>{{ request.user.first_name }} {{ request.user.last_name }}</span></h4>
+  <a class="btn" href="{% url 'logout_view' %}">
+      <i class="fa-solid fa-right-from-bracket"></i> Logout
+  </a>
 </nav>
 
-
-<div style="
-            padding: 50px; 
-            background-color: #95bdef; 
-            border-radius: 5px; 
-            margin: 20px;
-            margin-top: 120px;
-
-            ">
-    
-    <div class="container">
-        <div class="header">
-            <img src="https://i.ibb.co/jfScDTC/budget.png" alt="Expense Tracker"/>
-            <div class="balance-container">
-                <h2>Your Balance</h2>
-                <h2 id="balance" class="balance"><i class="fa-solid fa-wallet"></i>{{current_balance.current_balance}}</h2>
-            </div>
-        </div>
-        <div class="inc-exp-container">
-            <div>
-                <h4>Income</h4>
-                <p id="money-plus" class="money plus"><i class="fa-solid fa-indian-rupee-sign"></i> {{income}}</p>
-            </div>
-            <div>
-                <h4>Expenses</h4>
-                <p id="money-minus" class="money minus"><i class="fa-solid fa-indian-rupee-sign"></i> {{expense}}</p>
-            </div>
-        </div>
-
-        <div>
-        <h3>History</h3>
-
-        <ul id="list" class="list">
-            {% for transaction in transactions %}
-
-            <li class="{% if transaction.expense_type == 'DEBIT' %} minus {% else %} plus {% endif %}">
-                {{transaction.description}} <span> {{transaction.amount}} </span>
-                <a class="delete-btn" href="{% url 'delete_transaction' transaction.id %}">
-                    <i class="fas fa-trash-alt"></i></a>
-            </li>
-
-            {% endfor %}
-        </ul>
-        </div>
-
-        <h3>Add new transaction</h3>
-        <form method="POST" id="form">
-            {% csrf_token %}
-            <div class="form-control">
-                <label for="text">Description</label>
-                <input type="text" name="description" id="text" placeholder="Enter description..." />
-            </div>
-            <div class="form-control">
-                <label for="amount">Amount <br />
-                    <small>(-100 = expense, 100 = income)</small></label>
-                <input type="number" name="amount" id="amount" placeholder="Enter amount..." />
-            </div>
-            <button class="btn" type="submit">Add transaction</button>
-        </form>
-    </div>
-    <!-- Notification -->
-    <div class="notification-container" id="notification">
-        <p>Please add a description and amount</p>
+<div class="main-content">
+  <!-- Left side -->
+  <div class="left-panel">
+    <div class="header">
+      <img src="https://i.ibb.co/jfScDTC/budget.png" alt="Expense Tracker" />
+      <div class="balance-container">
+        <h2>Your Balance</h2>
+        <h2 class="balance"><i class="fa-solid fa-wallet"></i> {{ current_balance.current_balance }}</h2>
+      </div>
     </div>
 
+    <div class="inc-exp-container">
+      <div>
+        <h4>Income</h4>
+        <p class="money plus"><i class="fa-solid fa-indian-rupee-sign"></i> {{ income }}</p>
+      </div>
+      <div>
+        <h4>Expenses</h4>
+        <p class="money minus"><i class="fa-solid fa-indian-rupee-sign"></i> {{ expense }}</p>
+      </div>
     </div>
 
+    <form method="POST" id="form">
+      {% csrf_token %}
+      <div class="form-control">
+        <label for="text">Description</label>
+        <input type="text" name="description" placeholder="Enter description..." />
+      </div>
+      <div class="form-control">
+        <label for="amount">Amount <small>(-100 = expense, 100 = income)</small></label>
+        <input type="number" name="amount" placeholder="Enter amount..." />
+      </div>
+      <button class="btn" type="submit">Add Transaction</button>
+    </form>
+  </div>
 
-    {% endblock %}
+  <!-- Right side -->
+  <div class="right-panel">
+    <h3>History</h3>
+    <ul class="list">
+      {% for transaction in transactions %}
+      <li class="{% if transaction.expense_type == 'DEBIT' %}minus{% else %}plus{% endif %}">
+        {{ transaction.description }}
+        <span>{{ transaction.amount }}</span>
+        <a class="delete-btn" href="{% url 'delete_transaction' transaction.id %}">
+          <i class="fas fa-trash-alt"></i>
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+
+<div class="notification-container" id="notification">
+  <p>Please add a description and amount</p>
+</div>
+
+{% endblock %}
+
+
