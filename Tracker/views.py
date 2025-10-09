@@ -53,8 +53,8 @@ def logout_view(request):
     return redirect('/login/')
 
 
-@login_required(login_url="login_view2")
-def index(request):
+@login_required(login_url="login_view")
+def base(request):
     if request.method == "POST":
         description = request.POST.get('description')
         amount = request.POST.get('amount')
@@ -90,7 +90,7 @@ def index(request):
     context = {'income' : income,
                 'expense' : expense , 
                 'transactions' : TrackingHistory.objects.all() , 'current_balance' : current_balance}
-    return render(request, 'index.html' , context)
+    return render(request, 'base.html' , context)
 
 
 @login_required(login_url="login_view2")

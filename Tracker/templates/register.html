@@ -1,31 +1,68 @@
-{% extends "base.html"%}
+{% extends "index.html"%}
 {% block start %}
-<div  style="margin-top: -80px !important">
-<h3>Register Page</h3>
+
+
+
+<div  style="margin-top: 20px;
+            margin-bottom: 20px;
+            font-weight: bold; 
+            padding: 50px; 
+            border-radius: 5px; 
+            background-color: rgb(169, 214, 244);
+            ">
+
+<h2 style="text-align: center; 
+           margin-bottom: 20px; 
+           color: black;
+           ">Register Page</h2>
+
 <form method="POST" id="form">
+
     {% csrf_token %}
+
     <div class="form-control">
-        <label for="text">Username</label>
-        <input type="text" name="username" id="text" placeholder="Username..." />
+        <label for="text" style="color: black; font-weight: bold;">Username</label>
+        <input type="text" name="username" id="text" placeholder="Username..."  required/>
         <small>Unique username is required</small>
     </div>
     <div class="form-control">
-        <label for="text">First name</label>
-        <input type="text" name="first_name" id="text" placeholder="First Name..." />
+        <label for="text" style="color: black; font-weight: bold;">First name</label>
+        <input type="text" name="first_name" id="text" placeholder="First Name..." required />
       
     </div>
     <div class="form-control">
-        <label for="text">Last name</label>
-        <input type="text" name="last_name" id="text" placeholder="Last Name..." />
+        <label for="text" style="color: black; font-weight: bold;">Last name</label>
+        <input type="text" name="last_name" id="text" placeholder="Last Name..." required />
       
     </div>
     <div class="form-control">
-        <label for="amount">Password <br />
-        </label>
-        <input type="password" name="password" id="amount" placeholder="Password ..." />
+        <label for="amount" style="color: black; font-weight: bold;">Password </label><br/>
+        <input type="password" name="password" id="amount" placeholder="Password ..." required style="width: 250px; 
+                                                                                             height: 40px; 
+                                                                                             border-radius: 5px; 
+                                                                                             margin-bottom: 10px; 
+                                                                                             padding-left: 10px;
+                                                                                             "/>
     </div>
-    <p> Already have an account <a href="{% url 'login_view' %}">Login</a></p>
-    <button class="btn" type="submit" style="background-color: chartreuse;">Register</button>
+
+    <button class="btn" type="submit" style="background-color: rgb(5, 105, 30); 
+                                             font-weight: bold;
+                                             font-size: large;
+                                             ">Register Now</button>
+
+    <p> Already have an account</p>
+    <button  class="btn" type="submit" style=" 
+                    border-radius: 5px; 
+                    background-color: rgb(15, 8, 111);  
+                    margin-top: -10px; 
+                    font-weight: bold;
+                    ">
+         <a style="color: white;
+                  text-decoration: none; 
+                  font-size: large; "
+         href="{% url 'login_view' %}">Login Here</a>
+    </button>
+    
 </form>
 
 </div>

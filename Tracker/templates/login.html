@@ -1,22 +1,49 @@
-{% extends "base.html"%}
+{% extends "index.html"%}
 {% block start %}
-<div  style="margin-top: -80px !important">
-<h3>Login Page</h3>
+
+<div  style="margin-top: -80px !important; 
+            font-weight: bold; 
+            padding: 30px; 
+            border-radius: 5px; 
+            background-color: rgb(169, 214, 244);
+            " >
+<h2 style="text-align: center; 
+           margin-bottom: 20px; 
+           color: black;
+           ">Login Page</h2>
+
 <form method="POST" id="form">
     {% csrf_token %}
     <div class="form-control">
-        <label for="text">Username</label>
+        <label for="text" style="color: black; font-weight: bold;">Username</label>
         <input type="text" name="username" id="text" placeholder="Username..." />
         <small>Unique username is required</small>
     </div>
-    <div class="form-control">
-        <label for="amount">Password <br />
-        </label>
-        <input type="password" name="password" id="amount" placeholder="Password ..." />
-    </div>
-    <p> Don't have an account <a href="{% url 'register_view' %}">Register</a></p>
 
-    <button class="btn" type="submit">Login</button>
+    <div class="form-control">
+        <label for="amount" style="color: black; font-weight: bold;">Password</label><br />
+        <input type="password" name="password" id="amount" placeholder="Password ..." style="width: 250px; 
+                                                                                             height: 40px; 
+                                                                                             border-radius: 5px; 
+                                                                                             margin-bottom: 10px; 
+                                                                                             padding-left: 10px;
+                                                                                             "/>
+    </div>
+
+    <button class="btn" type="submit" style="font-weight: bold; font-size: large;">Login</button>
+     <p style="text-align: center; margin-top: -10px;"> Don't have an account</p>
+     <button class="btn" type="submit" style=" 
+                    border-radius: 5px; 
+                    background-color: rgb(5, 105, 30);  
+                    margin-top: -10px; 
+                    font-weight: bold;
+                    ">
+        <a style="color: white;
+                  text-decoration: none; 
+                  font-size: large; " 
+                  href="{% url 'register_view' %}">Register Here</a>
+     </button>
+     
 </form>
 
 </div>
