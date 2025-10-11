@@ -57,54 +57,54 @@ def logout_view(request):
 def base(request):
     if request.method == "POST":
         description = request.POST.get('description')
-        amount = request.POST.get('amount')
+        amount = float(request.POST.get('amount'))
 
-        current_balance, _ = CurrentBalance.objects.get_or_create(id = 1)
-        expense_type = "CREDIT"
-        if float(amount) < 0:
-            expense_type = "DEBIT"
+        # Each user gets their own CurrentBalance
+        current_balance, _ = CurrentBalance.objects.get_or_create(user=request.user)
 
-        if float(amount) == 0:
-            messages.success(request, "Amount cannot be zero") 
+        if amount == 0:
+            messages.warning(request, "Amount cannot be zero")
             return redirect('/')
 
-        tracking_history = TrackingHistory.objects.create(amount = amount,
-            expense_type = expense_type,
-            current_balance = current_balance,
-            description = description)
-        current_balance.current_balance += float(tracking_history.amount)
+        expense_type = "CREDIT" if amount > 0 else "DEBIT"
+
+        tracking_history = TrackingHistory.objects.create(
+            user=request.user,
+            current_balance=current_balance,
+            amount=amount,
+            expense_type=expense_type,
+            description=description
+        )
+
+        current_balance.current_balance += amount
         current_balance.save()
 
         return redirect('/')
-    
-    current_balance, _ = CurrentBalance.objects.get_or_create(id = 1)
-    income = 0
-    expense = 0
 
-    for tracking_history in TrackingHistory.objects.all():
-        if tracking_history.expense_type == "CREDIT":
-            income += tracking_history.amount
-        else:
-            expense += tracking_history.amount
+    # Fetch user-specific data only
+    current_balance, _ = CurrentBalance.objects.get_or_create(user=request.user)
+    transactions = TrackingHistory.objects.filter(user=request.user)
+    income = sum(t.amount for t in transactions if t.expense_type == "CREDIT")
+    expense = sum(t.amount for t in transactions if t.expense_type == "DEBIT")
 
-    context = {'income' : income,
-                'expense' : expense , 
-                'transactions' : TrackingHistory.objects.all() , 'current_balance' : current_balance}
-    return render(request, 'base.html' , context)
+    context = {
+        'income': income,
+        'expense': expense,
+        'transactions': transactions,
+        'current_balance': current_balance,
+    }
+    return render(request, 'base.html', context)
 
 
-@login_required(login_url="login_view2")
+@login_required(login_url="login_view")
 def delete_transaction(request, id):
-    tracking_history = TrackingHistory.objects.filter(id = id)
+    tracking_history = TrackingHistory.objects.filter(id=id, user=request.user).first()
 
-    if tracking_history.exists():
-        current_balance, _ = CurrentBalance.objects.get_or_create(id = 1)
-        tracking_history = tracking_history[0]
-        
-        current_balance.current_balance = current_balance.current_balance - tracking_history.amount
-
+    if tracking_history:
+        current_balance, _ = CurrentBalance.objects.get_or_create(user=request.user)
+        current_balance.current_balance -= tracking_history.amount
         current_balance.save()
+        tracking_history.delete()
 
-
-    tracking_history.delete()
     return redirect('/')
+
