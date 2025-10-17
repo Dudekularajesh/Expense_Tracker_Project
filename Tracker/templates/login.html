@@ -105,6 +105,11 @@ form {
   font-weight: normal;
   color: #333;
 }
+img{
+  width: 50px;
+  height: 50px;
+  margin-bottom: -15px;
+}
 
 /* -------- RESPONSIVE DESIGN -------- */
 @media (max-width: 600px) {
@@ -134,7 +139,11 @@ form {
 
 
 <div class="login-container">
-  <h2>Login Page</h2>
+  
+  <h2>
+    <img src="https://www.placements.codegnan.com/images/login-cartoon.webp" alt="login-img">
+    Login Page
+  </h2>
 
   <form method="POST" id="form">
     {% csrf_token %}

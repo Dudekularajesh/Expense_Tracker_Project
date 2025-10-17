@@ -1,52 +1,57 @@
 from django.shortcuts import render, redirect
-from .models import TrackingHistory, CurrentBalance
+from .models import TrackingHistory, CurrentBalance, UserProfile
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 
+
 def login_view(request):
     if request.method == "POST":
         username = request.POST.get('username')
         password = request.POST.get('password')
-        user = User.objects.filter(username = username)
-        if not user.exists():
-            messages.success(request, "Username not found") 
-            return redirect('/login/')
-        
-        user = authenticate(username = username , password = password)
-        if not user:
-            messages.success(request, "Incorrect password") 
-            return redirect('/login/')
-        
-        login(request , user)
-        return redirect('/')
 
-    return render(request , 'login.html')
+        
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('/')  
+        else:
+            messages.error(request, "Invalid username or password")
+            return redirect('/login/')
+
+    return render(request, 'login.html')
 
 
 def register_view(request):
     if request.method == "POST":
         username = request.POST.get('username')
         password = request.POST.get('password')
-        first_name = request.POST.get('first_name')
-        last_name = request.POST.get('last_name')
+        email = request.POST.get('email')
+        phone_number = request.POST.get('phone_number')
+        profile_picture = request.FILES.get('profile_picture') 
 
-        user = User.objects.filter(username = username)
-        if user.exists():
-            messages.success(request, "Username is already taken") 
-            return redirect('/register/')
         
-        user = User.objects.create(
-            username = username,
-            first_name = first_name,
-            last_name=last_name
-        )
+        if User.objects.filter(username=username).exists():
+            messages.error(request, "Username already exists")
+            return redirect('/register/')
+
+        
+        user = User.objects.create(username=username, email=email)
         user.set_password(password)
         user.save()
-        messages.success(request, "Account created") 
-        return redirect('/register/')
-    return render(request , 'register.html')
+
+        
+        UserProfile.objects.create(
+            user=user,
+            phone_number=phone_number,
+            profile_picture=profile_picture if profile_picture else 'default.jpg'
+        )
+
+        messages.success(request, "Account created successfully! Please login.")
+        return redirect('/login/')
+
+    return render(request, 'register.html')
 
 def logout_view(request):
     logout(request)
@@ -55,11 +60,12 @@ def logout_view(request):
 
 @login_required(login_url="login_view")
 def base(request):
+    user_profile, created = UserProfile.objects.get_or_create(user=request.user)
     if request.method == "POST":
         description = request.POST.get('description')
         amount = float(request.POST.get('amount'))
 
-        # Each user gets their own CurrentBalance
+        
         current_balance, _ = CurrentBalance.objects.get_or_create(user=request.user)
 
         if amount == 0:
@@ -68,7 +74,7 @@ def base(request):
 
         expense_type = "CREDIT" if amount > 0 else "DEBIT"
 
-        tracking_history = TrackingHistory.objects.create(
+        TrackingHistory.objects.create(
             user=request.user,
             current_balance=current_balance,
             amount=amount,
@@ -81,17 +87,22 @@ def base(request):
 
         return redirect('/')
 
-    # Fetch user-specific data only
+    
     current_balance, _ = CurrentBalance.objects.get_or_create(user=request.user)
     transactions = TrackingHistory.objects.filter(user=request.user)
     income = sum(t.amount for t in transactions if t.expense_type == "CREDIT")
     expense = sum(t.amount for t in transactions if t.expense_type == "DEBIT")
+
+    
+    
+
 
     context = {
         'income': income,
         'expense': expense,
         'transactions': transactions,
         'current_balance': current_balance,
+        'profile': user_profile,   
     }
     return render(request, 'base.html', context)
 
@@ -107,4 +118,5 @@ def delete_transaction(request, id):
         tracking_history.delete()
 
     return redirect('/')
+
 

@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-@duaqc^a+eq!$6cr2=thi7yzdatd3fa6=u1=p+8hob&j26!ner
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -48,6 +48,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'Expense_Traker.middleware.RequestLogginMiddleware.RequestLogging',
 ]
 
 ROOT_URLCONF = 'Expense_Traker.urls'
@@ -79,6 +80,9 @@ WSGI_APPLICATION = 'Expense_Traker.wsgi.application'
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
+
+
+
 
 DATABASES = {
     'default': {
@@ -128,18 +132,20 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 import os
-STATIC_ROOT = 'staticfiles'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR,'staticfiles')
 
-STATICFILES_DIR = {
-    os.path.join(BASE_DIR , "public/static")
-}
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+# STATICFILES_DIR = {
+#     os.path.join(BASE_DIR , "public/static")
+# }
 
-MEDIA_ROOT =  os.path.join(BASE_DIR, 'public/static') 
 MEDIA_URL = '/media/'
+MEDIA_ROOT =  BASE_DIR / 'media' 
+
 
 
 # Default primary key field type

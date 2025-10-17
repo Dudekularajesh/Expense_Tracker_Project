@@ -5,6 +5,17 @@ from django.dispatch import receiver
 
 
 
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    phone_number = models.CharField(max_length=15, blank=True, null=True)
+    profile_picture = models.ImageField(upload_to='profile_pics/', default='default.jpg')
+
+    def __str__(self):
+        return self.user.username
+
+
+
 class CurrentBalance(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE) 
     current_balance = models.FloatField(default = 0)

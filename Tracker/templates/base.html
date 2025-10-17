@@ -2,6 +2,8 @@
 {% extends "index.html" %}
 {% block start %}
 
+{% load static %}
+
 <style>
     /* 🌟 GLOBAL SETTINGS */
 body {
@@ -306,14 +308,42 @@ form {
 
 
 
-<nav>
+<!-- <nav>
   <h1><i class="fa-solid fa-house"></i> Expense Tracker</h1>
   <h4><i class="fa-solid fa-circle-user"></i> User Name:
       <span>{{ request.user.first_name }} {{ request.user.last_name }}</span></h4>
   <a class="btn" href="{% url 'logout_view' %}">
       <i class="fa-solid fa-right-from-bracket"></i> Logout
   </a>
+</nav> -->
+
+
+
+
+<nav style="display: flex; justify-content: space-around; align-items: center; background-color: #b3d9ff;padding: 10px 20px; border-radius: 5px;">
+    <h1><i class="fa-solid fa-house"></i> Expense Tracker</h1>
+
+   <div style="display: flex; align-items: center; gap: 15px;">
+      {% if profile.profile_picture %}
+          <img src="{{ profile.profile_picture.url }}" alt="Profile" 
+               style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;">
+      {% else %}
+          <img src="{% static 'images/default.png' %}" alt="Default" 
+               style="width: 40px; height: 40px; border-radius: 50%;">
+      {% endif %}
+
+        <div>
+            <strong>User Name : {{ request.user.username }}</strong><br>
+            <small>Email : {{ request.user.email }}</small><br>
+            <small>Phone : {{ profile.phone_number }}</small>
+        </div>
+    </div>
+
+    <a class="btn btn-danger" href="{% url 'logout_view' %}">
+        <i class="fa-solid fa-right-from-bracket"></i> Logout
+    </a>
 </nav>
+
 
 <div class="main-content">
   <!-- Left side -->
